@@ -388,7 +388,22 @@
         let isBaseLanguage = true;
         let currentSpeakingLanguage = '';
         let hasIntroduced = false;
-        const GEMINI_API_KEY = window.ENV_GEMINI_API_KEY;
+        let GEMINI_API_KEY = null;
+
+// Fetch API key on load
+async function initializeConfig() {
+    try {
+        const response = await fetch('/api/config');
+        const config = await response.json();
+        GEMINI_API_KEY = config.geminiApiKey;
+    } catch (error) {
+        console.error('Failed to load configuration:', error);
+    }
+}
+
+// Call initialize on page load
+initializeConfig();
+
     
         // Configure speech recognition
         recognition.continuous = true;

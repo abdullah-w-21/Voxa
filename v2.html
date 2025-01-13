@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Voxa - AI Translator</title>
+    <title>Voxaa - AI Translator</title>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -293,7 +293,7 @@
 <body>
     <div class="container">
         <header class="header">
-            <h1>Voxa - AI Translator</h1>
+            <h1>Voxaa - AI Translator</h1>
             <p>Select languages and start speaking</p>
         </header>
 
@@ -453,13 +453,13 @@
             try {
                 if (!hasIntroduced) {
                     // First introduction in English
-                    const engIntro = "Hi, I'm Voxa. I'll be your translator today. Begin speaking.";
+                    const engIntro = "Hi, I'm Voxaa. I'll be your translator today. Begin speaking.";
                     originalTextDiv.innerHTML = `<p>${engIntro}</p>`;
                     await speak(engIntro, 'en');
     
                     // Second introduction in target language
                     const targetIntro = await translateText(
-                        "Hi, I'm Voxa. I'll be your translator today.",
+                        "Hi, I'm Voxaa. I'll be your translator today.",
                         'en',
                         toLanguageSelect.value
                     );

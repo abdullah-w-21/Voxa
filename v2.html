@@ -296,6 +296,12 @@
         <header class="header">
             <h1>Voxaa - AI Translator</h1>
             <p>Select languages and start speaking</p>
+            <button id="settingsButton" class="absolute top-4 right-4 p-2 rounded-full hover:bg-[#13141f] transition-all">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M12 15a3 3 0 100-6 3 3 0 000 6z" />
+        <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z" />
+    </svg>
+</button>
         </header>
 
         <main class="translation-container">
@@ -367,6 +373,27 @@
             </div>
         </main>
     </div>
+    <div id="apiKeyModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center" style="background: rgba(0,0,0,0.7); z-index: 1000;">
+    <div class="bg-[#13141f] p-8 rounded-xl border border-[#7C3AED] max-w-md w-full mx-4">
+        <h2 class="text-2xl mb-4 text-white font-semibold">Welcome to Voxaa</h2>
+        <p class="text-gray-300 mb-6">Please enter your Gemini API key to start using the translator.</p>
+        <div class="space-y-4">
+            <input type="password" id="apiKeyInput" placeholder="Enter your Gemini API key" 
+                   class="w-full p-3 rounded-lg bg-[#0a0b0f] border border-[#7C3AED] text-white focus:outline-none focus:ring-2 focus:ring-[#7C3AED]">
+            <button id="saveApiKey" 
+                    class="w-full bg-[#7C3AED] text-white py-3 px-6 rounded-lg hover:bg-opacity-90 transition-all">
+                Start Translating
+            </button>
+            <p class="text-sm text-gray-400 mt-4">
+                Don't have an API key? 
+                <a href="https://makersuite.google.com/app/apikey" target="_blank" 
+                   class="text-[#64ffda] hover:underline">
+                    Get one here
+                </a>
+            </p>
+        </div>
+    </div>
+</div>
 
     <script>
         // Initialize Web Speech API
@@ -375,6 +402,11 @@
         const speechSynthesis = window.speechSynthesis;
     
         // DOM Elements
+        let GEMINI_API_KEY = localStorage.getItem('gemini_api_key');
+        const apiKeyModal = document.getElementById('apiKeyModal');
+const apiKeyInput = document.getElementById('apiKeyInput');
+const saveApiKeyButton = document.getElementById('saveApiKey');
+const settingsButton = document.getElementById('settingsButton');
         const micButton = document.getElementById('micButton');
         const waveContainer = document.querySelector('.wave-container');
         const originalTextDiv = document.getElementById('originalText');
@@ -388,21 +420,32 @@
         let isBaseLanguage = true;
         let currentSpeakingLanguage = '';
         let hasIntroduced = false;
-        let GEMINI_API_KEY = null;
-
-// Fetch API key on load
-async function initializeConfig() {
-    try {
-        const response = await fetch('/api/config');
-        const config = await response.json();
-        GEMINI_API_KEY = config.geminiApiKey;
-    } catch (error) {
-        console.error('Failed to load configuration:', error);
-    }
+        
+// Show modal if no API key is stored
+if (!GEMINI_API_KEY) {
+    apiKeyModal.style.display = 'flex';
+} else {
+    apiKeyModal.style.display = 'none';
 }
 
-// Call initialize on page load
-initializeConfig();
+// Settings button handler
+settingsButton.addEventListener('click', () => {
+    apiKeyModal.style.display = 'flex';
+    if (GEMINI_API_KEY) {
+        apiKeyInput.value = GEMINI_API_KEY;
+    }
+});
+
+// Save API key handler
+saveApiKeyButton.addEventListener('click', () => {
+    const newApiKey = apiKeyInput.value.trim();
+    if (newApiKey) {
+        GEMINI_API_KEY = newApiKey;
+        localStorage.setItem('gemini_api_key', newApiKey);
+        apiKeyModal.style.display = 'none';
+    }
+});
+
 
     
         // Configure speech recognition
